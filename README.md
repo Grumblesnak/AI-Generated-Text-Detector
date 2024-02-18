@@ -1,2 +1,5 @@
 # AI-Generated-Text-Detector
 Machine learning Python program for detecting AI-generated text
+
+V0.5 of the program has basic functionality with a small initial selection of identifiers built into the program in an admittedly primitive manner, should be updated by at least V1.5 to take in a .CSV file that is structurally identical to what is used in this version (“this is AI or not”, 0 or 1). 
+Program currently employs Multinominal Naïve Bayes for classifying text in a simple form, note that for it to be considerably more effective will require a MUCH LARGER diverse collection of training data that will be suitably added with each version iteration. Current training data consists of quotes from books for human examples and sentences taken from ChatGPT, will attempt to include exerts from actual papers in future updates. Sklearn is used for feature extraction with ‘CountVectorizer’ which converts text data into a matrix of token counts for words. The test-train split is 80% for training and the remaining 20% is for testing, ‘fit’ is used to train the MNB model.
