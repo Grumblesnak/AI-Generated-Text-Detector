@@ -76,37 +76,39 @@ def analyse_text(input_text):
     # Return the AI likelihood prediction probability
     return model.predict_proba(input_vector)[0][1] * 100
 
+# Simple GUI built using Tkinter
 class TextDetectorGUI:
     def __init__(self, master):
         self.master = master
-        master.title("AI Text Detector")
+        master.title("AI Text Detector")  # This will be the title of the GUI window
 
-        self.label = Label(master, text="Input Suspected Text: ")
+        self.label = Label(master, text="Input Suspected Text: ")  # Label to indicate what the below entry box is for
         self.label.pack()
 
-        self.text_entry = Text(master, height=5, width=50)
+        self.text_entry = Text(master, height=5, width=50)  # What the label above points to, where text is input for analysis
         self.text_entry.pack()
 
-        self.analyse_button = Button(master, text="Scan", command=self.analyse_text)
-        self.analyse_button.pack(side=tk.LEFT)
+        self.analyse_button = Button(master, text="Scan", command=self.analyse_text)  # Button will call the program to analyse whatever text is within the above input
+        self.analyse_button.pack(side=tk.LEFT)  # Positions the button on the left of the GUI window
 
-        self.exit_button = Button(master, text="Exit", command=self.exit_program)
-        self.exit_button.pack(side=tk.RIGHT)
+        self.exit_button = Button(master, text="Exit", command=self.exit_program)  # Button will exit the program, first calling a confirmation window beforehand just in case
+        self.exit_button.pack(side=tk.RIGHT)  # Positions the button on the right of the GUI window
 
-        self.result_label = Label(master, text="")
+        self.result_label = Label(master, text="")  # This will display the result of the analysis
         self.result_label.pack()
 
-    def analyse_text(self):
+    def analyse_text(self):  # Method will receive the text to be analysed then updates the above label with the result
         input_text = self.text_entry.get("1.0", tk.END).strip()
         probability = analyse_text(input_text)
         result_text = f"AI-generation probability: {probability}%"
         self.result_label.config(text=result_text)
 
-    def exit_program(self):
+    def exit_program(self):  # Method will ask for confirmation before exiting the program
         if messagebox.askokcancel("Exit", "Are you sure?"):
             self.master.destroy()
 
 
+# Ensures the script is actually being run correctly, if it is then the GUI will run properly in a Tk event loop
 if __name__ == "__main__":
     root = tk.Tk()
     app = TextDetectorGUI(root)
