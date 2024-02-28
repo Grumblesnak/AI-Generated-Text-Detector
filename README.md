@@ -27,11 +27,11 @@ Planned 2.0 Changes:
   Refuse non-valid file uploads (mp3, mp4, etc). 
 
 Planned 2.5 Changes: 
+  Allow replacement of base training dataset with custom file upload via GUI, 
+  Highlighting analysed text that triggers detection/similarity with AI-generations. 
+
+Planned 3.0 Changes: 
   Improve GUI, make more user friendly/appealing to look at, 
   Improve dataset contents (Either significantly increase quantity or expand classification of texts (more 0 and 1 columns)), 
   Update code to handle updated dataset if neccessary. 
   Expand training dataset.
-
-Planned 2.5 Changes:
-  Allow replacement of base training dataset with custom file upload via GUI, 
-  Highlighting analysed text that triggers detection/similarity with AI-generations.
