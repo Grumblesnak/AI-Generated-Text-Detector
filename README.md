@@ -22,9 +22,9 @@ Update 1.5 Changes:
   Code has been added (using pandas) to extract data from the file, train the X and y, train the model, and then work as intended, 
   Structure of dataset file is identical to formerly inbuilt structure ("blah blah blah", 0 or 1). 
 
-Planned 2.0 Changes: 
-  Allow document upload in GUI and code (txt, word, pdf), 
-  Refuse non-valid file uploads (mp3, mp4, etc). 
+Update 2.0 Changes: 
+  Program allows for alternative uploading of a file instead of typing/copy-pasting text, accepts and should auto filte for txt, docx (word), and pdf files.
+  Any files that are invalid and not one of the above three are refused.
 
 Planned 2.5 Changes: 
   Allow replacement of base training dataset with custom file upload via GUI, 
