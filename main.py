@@ -4,11 +4,14 @@ import numpy as np
 # import tensorflow as tf
 import tkinter as tk
 import pandas as pd
+import docx
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 # from sklearn.metrics import accuracy_score
 from tkinter import Label, Text, Button, messagebox
+from tkinter import filedialog
+from PyPDF2 import PdfReader
 
 
 # Training data is the most important part of the program
@@ -34,6 +37,9 @@ class TextDetectorGUI:
                                width=50)  # What the label above points to, where text is input for analysis
         self.text_entry.pack()
 
+        self.upload_button = Button(master, text="Upload Document", command=self.upload_document)
+        self.upload_button.pack()
+
         self.analyse_button = Button(master, text="Scan",
                                      command=self.analyse_text)  # Button will call the program to analyse whatever text is within the above input
         self.analyse_button.pack(side=tk.LEFT)  # Positions the button on the left of the GUI window
@@ -49,6 +55,28 @@ class TextDetectorGUI:
         # model so that the probability is predicted and vectorizer to convert the input text before being passed to the model
         self.model = model
         self.vectorizer = vectorizer
+
+    def upload_document(self):
+        file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt;*.docx;*.pdf")])
+        if file_path:
+            with open(file_path, "rb") as file:
+                if file_path.lower().endswith(".txt"):
+                    content = file.read().decode("utf-8")
+                elif file_path.lower().endswith(".docx"):
+                    doc = docx.Document(file)
+                    content = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+                elif file_path.lower().endswith(".pdf"):
+                    pdf_reader = PdfReader(file)
+                    content = ""
+                    for page_num in range(len(pdf_reader.pages)):
+                        page = pdf_reader.pages[page_num]
+                        content += page.extract_text()
+                else:
+                    messagebox.showwarning("Invalid File", "Upload a valid text, Word, or PDF document...")
+                    return
+
+            self.text_entry.delete("1.0", tk.END)
+            self.text_entry.insert(tk.END, content)
 
     def analyse_text(self):  # Method will receive the text to be analysed then updates the above label with the result
         input_text = self.text_entry.get("1.0", tk.END).strip()
