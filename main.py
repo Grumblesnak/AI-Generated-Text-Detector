@@ -26,7 +26,7 @@ def analyse_text(input_text, model, vectorizer):
 
 # Simple GUI built using Tkinter
 class TextDetectorGUI:
-    def __init__(self, master, model, vectorizer):
+    def __init__(self, master, model, vectorizer, base_training_data):
         self.master = master
         master.title("AI Text Detector")  # This will be the title of the GUI window
 
@@ -38,7 +38,10 @@ class TextDetectorGUI:
         self.text_entry.pack()
 
         self.upload_button = Button(master, text="Upload Document", command=self.upload_document)
-        self.upload_button.pack()
+        self.upload_button.pack(side=tk.LEFT)
+
+        self.replace_training_data_button = Button(master, text="Replace Training Data", command=self.replace_training_data)
+        self.replace_training_data_button.pack(side=tk.RIGHT)
 
         self.analyse_button = Button(master, text="Scan",
                                      command=self.analyse_text)  # Button will call the program to analyse whatever text is within the above input
@@ -55,6 +58,8 @@ class TextDetectorGUI:
         # model so that the probability is predicted and vectorizer to convert the input text before being passed to the model
         self.model = model
         self.vectorizer = vectorizer
+        self.base_training_data = base_training_data
+        self.highlight_colour = "yellow"
 
     def upload_document(self):
         file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt;*.docx;*.pdf")])
@@ -77,6 +82,21 @@ class TextDetectorGUI:
 
             self.text_entry.delete("1.0", tk.END)
             self.text_entry.insert(tk.END, content)
+
+    def replace_training_data(self):
+        response = messagebox.askyesno("Warning", "Changing base training data may cause errors or affect program outputs. Continue?")
+        if not response:
+            return
+
+        file_path = filedialog.askopenfilename(filetypes=[("CSV file", "*.csv")])
+        if file_path:
+            try:
+                new_training_data = load_training_data(file_path)
+                self.model, self.vectorizer = train_model(new_training_data)
+                self.base_training_data = new_training_data
+                messagebox.showinfo("Success", "Dataset has been updated...")
+            except Exception as e:
+                messagebox.showerror("Error", f"Error loading or training with new dataset:\n{str(e)}")
 
     def analyse_text(self):  # Method will receive the text to be analysed then updates the above label with the result
         input_text = self.text_entry.get("1.0", tk.END).strip()
@@ -122,5 +142,5 @@ if __name__ == "__main__":
 
     # Ensures the script is actually being run correctly, if it is then the GUI will run properly in a Tk event loop
     root = tk.Tk()
-    app = TextDetectorGUI(root, model, vectorizer)
+    app = TextDetectorGUI(root, model, vectorizer, training_data)
     root.mainloop()
