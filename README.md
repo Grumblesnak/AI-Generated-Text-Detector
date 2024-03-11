@@ -30,7 +30,8 @@ Update 2.5 Changes:
   Allows replacement of default provided training dataset through a button on GUI, 
   Warning before changing training dataset appears as popup, 
   (Minor) Highlighting moved to planned 3.0 changes after training dataset configuration, 
-  (Minor) Included text files with code potentially for 3.0: One using current model that needs heavy modifying to work, and one using a RNN Neural Model with potential issue of not having enough in training dataset. 
+  (Minor) Included text files with code potentially for 3.0: One using current model that needs heavy modifying to work, and one using a RNN Neural Model with potential issue of not having enough in training dataset, 
+  (Minor) Included beta training dataset for potential 3.0 update. Currently is short in examples that may be affecting RNN model. 
 
 Planned 3.0 Changes: 
   Improve GUI, make more user friendly/appealing to look at, 
