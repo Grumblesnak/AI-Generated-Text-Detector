@@ -39,3 +39,5 @@ Update 3.0 Changes:
   Dataset expanded with two new columns: REFERENCE and SOURCE. 0 for possession (Human) and 1 for lack thereof (AI), 
   GUI updated to include two checkboxes for assigning values to the input text for the aforementioned columns, by default value is 1 if left unticked, 
   Dataset itself has been remade with different examples that are more professional.
+  (Minor) Removed beta training dataset, 
+  (Minor) Removed text files from previous update. 
