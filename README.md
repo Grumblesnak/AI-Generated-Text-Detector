@@ -33,10 +33,9 @@ Update 2.5 Changes:
   (Minor) Included text files with code potentially for 3.0: One using current model that needs heavy modifying to work, and one using a RNN Neural Model with potential issue of not having enough in training dataset, 
   (Minor) Included beta training dataset for potential 3.0 update. Currently is short in examples that may be affecting RNN model. 
 
-Planned 3.0 Changes: 
-  Improve GUI, make more user friendly/appealing to look at, 
-  Improve dataset contents (Either significantly increase quantity or expand classification of texts (more 0 and 1 columns)), 
-  Highlight text that triggers probability result above 20%, 
-  Update code to handle updated dataset if neccessary, 
-  Expand training dataset.
-  
+Update 3.0 Changes: 
+  Slightly Improved GUI, made input box larger, 
+  Suspicious text will be highlighted and displayed in input box after scan, not 100% as has demonstrated highlighting text with 0.12% AI probability, 
+  Dataset expanded with two new columns: REFERENCE and SOURCE. 0 for possession (Human) and 1 for lack thereof (AI), 
+  GUI updated to include two checkboxes for assigning values to the input text for the aforementioned columns, by default value is 1 if left unticked, 
+  Dataset itself has been remade with different examples that are more professional.
