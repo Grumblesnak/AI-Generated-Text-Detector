@@ -41,3 +41,8 @@ Update 3.0 Changes:
   Dataset itself has been remade with different examples that are more professional.
   (Minor) Removed beta training dataset, 
   (Minor) Removed text files from previous update. 
+
+Update 3.5 Changes:
+  Included a check to ensure the text input box isn't empty, if it is then a message is displayed, 
+  Expanded training dataset, 
+  (Minor) Added more comments to code in an attempt to describe some things. 
