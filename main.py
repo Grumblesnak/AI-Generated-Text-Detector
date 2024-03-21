@@ -1,5 +1,4 @@
 # Import necessary packages
-# Unused imports and such will be commented out for now to reduce warnings until they are or are confirmed not needed
 import numpy as np
 import tkinter as tk
 import pandas as pd
@@ -33,14 +32,14 @@ class TextDetectorGUI:
         self.text_entry = Text(self.text_frame, height=20, width=100)  # What the label above points to, where text is input for analysis
         self.text_entry.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.scrollbar = tk.Scrollbar(self.text_frame, command=self.text_entry.yview)
+        self.scrollbar = tk.Scrollbar(self.text_frame, command=self.text_entry.yview)  # Adds a scrollbar to the text box for particularly long inputs
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.text_entry.config(yscrollcommand=self.scrollbar.set)
 
-        self.upload_button = Button(master, text="Upload Document", command=self.upload_document)
+        self.upload_button = Button(master, text="Upload Document", command=self.upload_document)  # Button for uploading documents (word, txt, pdf...)
         self.upload_button.pack(side=tk.LEFT)
 
-        self.replace_training_data_button = Button(master, text="Replace Training Data", command=self.replace_training_data)
+        self.replace_training_data_button = Button(master, text="Replace Training Data", command=self.replace_training_data)  # Button for uploading CSV file datasets
         self.replace_training_data_button.pack(side=tk.RIGHT)
 
         self.analyse_button = Button(master, text="Scan",
@@ -54,11 +53,11 @@ class TextDetectorGUI:
         self.result_label = Label(master, text="")  # This will display the result of the analysis
         self.result_label.pack()
 
-        self.reference_var = tk.IntVar()
+        self.reference_var = tk.IntVar()  # Checkbox for if input text has references: (name, date)
         self.reference_checkbox = tk.Checkbutton(master, text="Has References", variable=self.reference_var, command=self.update_reference)
         self.reference_checkbox.pack(side=tk.LEFT)
 
-        self.sources_var = tk.IntVar()
+        self.sources_var = tk.IntVar()  # Checkbox for if input has sources anywhere: Harvard referencing/real sources
         self.sources_checkbox = tk.Checkbutton(master, text="Has Sources", variable=self.sources_var, command=self.update_source)
         self.sources_checkbox.pack(side=tk.LEFT)
 
@@ -69,6 +68,9 @@ class TextDetectorGUI:
         self.base_training_data = base_training_data
         self.highlight_colour = "yellow"
 
+    # When the document upload button is pressed the program this function will automatically filter the file types when searching through files
+    # A backup check in case an invalid file type does get through will display a message/warning and not accept the input
+    # Otherwise the input file will have its contents displayed in the text input box
     def upload_document(self):
         file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt;*.docx;*.pdf")])
         if file_path:
@@ -91,6 +93,9 @@ class TextDetectorGUI:
             self.text_entry.delete("1.0", tk.END)
             self.text_entry.insert(tk.END, content)
 
+    # When the button to replace the training dataset is selected then an initial yes or no message to continue will display
+    # Files are automatically filtered to CSV files, upon a successful insertion then a message will display and the dataset is replaced
+    # A CSV with invalid structure (columns) will not replace and display a message saying what is missing
     def replace_training_data(self):
         response = messagebox.askyesno("Warning", "Changing base training data may cause errors or affect program outputs. Continue?")
         if not response:
@@ -106,6 +111,8 @@ class TextDetectorGUI:
             except Exception as e:
                 messagebox.showerror("Error", f"Error loading or training with new dataset:\n{str(e)}")
 
+    # update_reference and update_source will check the ticked boxes
+    # Depending on if the checkboxes being ticked or not will affect the corresponding reference and source values for the input data
     def update_reference(self):
         if self.reference_var.get() == 1:
             return 0
@@ -121,20 +128,34 @@ class TextDetectorGUI:
     def analyse_text(self):  # Method will receive the text to be analysed then updates the above label with the result
         input_text = self.text_entry.get("1.0", tk.END).strip()
 
+        if not input_text:  # If the text box is empty then a message will display and not continue
+            messagebox.showwarning("No text found", "Enter text to be analysed...")
+            return
+
+        # Get the previous function values for the input text
         reference_value = self.update_reference()
         source_value = self.update_source()
 
+        # Vectorize the text in a way the model can understand, using the same one made during training
+        # The values for reference and source (missing from the input) are assigned from the acquired update functions
+        # the text, reference, and source values are then concatenated like in the training
         input_vector_text = self.vectorizer.transform([input_text]).toarray()
         reference_source_values = np.array([[reference_value, source_value]])
         input_vector = np.concatenate((input_vector_text, reference_source_values), axis=1)
 
+        # The input and set values are put through the model with the probability percentage rounded to two and displayed in the GUI
         probability = self.model.predict_proba(input_vector)[0][1] * 100
         probability = round(probability, 2)  # Round the probability output down to two decimal points
         result_text = f"AI-generation probability: {probability}%"
         self.result_label.config(text=result_text)
 
+        # For text highlighting, the input text will be split before going through its own probability check
         sentences = re.split(r"(?<!\w\.\w)(?<![A-Z][a-z]\.)(?<=[.?])\s", input_text)
-        self.text_entry.insert(tk.END, "\n\nSuspicious Text:\n")
+
+        # This will clear anything in the text box prior, so that only the highlighted text is shown
+        self.text_entry.delete("1.0", tk.END)
+
+        # The probability of the sentence text, anything higher than 50% is highlighted but can be adjusted if necessary
         for sentence in sentences:
             sentence_vector = self.vectorizer.transform([sentence]).toarray()
             sentence_vector = np.concatenate((sentence_vector, reference_source_values), axis=1)
@@ -144,7 +165,7 @@ class TextDetectorGUI:
             else:
                 self.text_entry.insert(tk.END, sentence)
             self.text_entry.insert(tk.END, '\n')
-        self.text_entry.tag_configure('highlighted', background='yellow')
+        self.text_entry.tag_configure('highlighted', background='yellow')  # Highlighted text will be yellow
 
     def exit_program(self):  # Method will ask for confirmation before exiting the program
         if messagebox.askokcancel("Exit", "Are you sure?"):
@@ -161,10 +182,14 @@ def train_model(training_data):
     # The returned above data is sent here with 'CountVectorizer' to convert the text
     vectorizer = CountVectorizer()
 
+    # Separate the text and numeric X data
+    # Convert the text into a way the model is capable of understanding
+    # Put all the X data together
     X_text = vectorizer.fit_transform(training_data["TEXT"]).toarray()
     X_numeric = np.array(training_data[["REFERENCE", "SOURCE"]], dtype=float)
     X = np.concatenate((X_text, X_numeric), axis=1)
 
+    # Take the y data from the dataset (target value)
     y = np.array(training_data["ID"])
 
     # 80% of data is used for training and 20% for testing, a random state is set to 0 for consistent outputs
@@ -175,15 +200,15 @@ def train_model(training_data):
 
     # Evaluate/test the model's accuracy, F1 score, and prediction outcome (TP, TN, FP, FN)
     y_prediction = trained_model.predict(X_test)
-    acc = accuracy_score(y_test, y_prediction)
-    f1 = f1_score(y_test, y_prediction)
+    acc = round(accuracy_score(y_test, y_prediction), 2)
+    f1 = round(f1_score(y_test, y_prediction), 2)
     confusion = confusion_matrix(y_test, y_prediction)
 
+    # Print out the inbuilt tests
     print(f"Accuracy: {acc}")
     print(f"F1: {f1}")
     print(f"Confusion Matrix: ")
     print(confusion)
-
 
     # The newly trained Multinomial model and vectorizer for transforming the text are returned
     return trained_model, vectorizer
