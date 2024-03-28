@@ -7,7 +7,7 @@ import re
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
+from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, precision_score, recall_score
 from tkinter import Label, Text, Button, messagebox
 from tkinter import filedialog
 from PyPDF2 import PdfReader
@@ -198,15 +198,19 @@ def train_model(training_data):
     trained_model = MultinomialNB()
     trained_model.fit(X_train, y_train)
 
-    # Evaluate/test the model's accuracy, F1 score, and prediction outcome (TP, TN, FP, FN)
+    # Evaluate/test the model's accuracy, F1 score, precision, recall, and prediction outcome (TP, TN, FP, FN)
     y_prediction = trained_model.predict(X_test)
     acc = round(accuracy_score(y_test, y_prediction), 2)
     f1 = round(f1_score(y_test, y_prediction), 2)
+    precision = round(precision_score(y_test, y_prediction), 2)
+    recall = round(recall_score(y_test, y_prediction), 2)
     confusion = confusion_matrix(y_test, y_prediction)
 
     # Print out the inbuilt tests
     print(f"Accuracy: {acc}")
     print(f"F1: {f1}")
+    print(f"Precision: {precision}")
+    print(f"Recall: {recall}")
     print(f"Confusion Matrix: ")
     print(confusion)
 
